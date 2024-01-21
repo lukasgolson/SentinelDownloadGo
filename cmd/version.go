@@ -24,5 +24,9 @@ package cmd
 import "go.szostok.io/version/extension"
 
 func init() {
-	rootCmd.AddCommand(extension.NewVersionCobraCmd())
+	rootCmd.AddCommand(extension.NewVersionCobraCmd(
+		// 2. Explicitly enable upgrade notice
+		extension.WithUpgradeNotice("lukasgolson", "SentinelDownloadGo"),
+	))
+
 }
