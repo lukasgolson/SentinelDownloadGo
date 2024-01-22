@@ -22,6 +22,7 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"SentinelDownload/Application"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -39,11 +40,31 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("login called")
+
+		username, _ := cmd.Flags().GetString("username")
+		password, _ := cmd.Flags().GetString("password")
+
+		if username == "" {
+			fmt.Println("Username is required")
+			return
+		}
+
+		RefreshToken, err := Application.GetRefreshToken(Application.Credentials{Username: username, Password: password})
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		fmt.Printf("%+v\n", RefreshToken)
+
 	},
 }
 
 func init() {
 	authCmd.AddCommand(loginCmd)
+
+	loginCmd.Flags().StringP("username", "u", "", "Username")
+	loginCmd.Flags().StringP("password", "p", "", "Password")
 
 	// Here you will define your flags and configuration settings.
 
