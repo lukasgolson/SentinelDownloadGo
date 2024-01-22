@@ -24,6 +24,7 @@ package cmd
 import (
 	"SentinelDownload/Application"
 	"fmt"
+	"github.com/zalando/go-keyring"
 
 	"github.com/spf13/cobra"
 )
@@ -53,6 +54,13 @@ to quickly create a Cobra application.`,
 
 		if err != nil {
 			fmt.Println(err)
+		} else {
+			fmt.Println("Login successful")
+
+			err = keyring.Set("SentinelDownload", username, password)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 
 		fmt.Printf("%+v\n", RefreshToken)

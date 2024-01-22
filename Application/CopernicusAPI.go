@@ -16,14 +16,14 @@ func init() {
 
 }
 
-func GetRefreshToken(authentication Credentials) (RefreshToken, error) {
+func GetRefreshToken(credentials Credentials) (RefreshToken, error) {
 	resp, err := client.R().
 		SetHeader("Content-Type", "application/x-www-form-urlencoded").
 		SetFormData(map[string]string{
 			"grant_type": "password",
 			"client_id":  "cdse-public",
-			"username":   authentication.Username,
-			"password":   authentication.Password,
+			"username":   credentials.Username,
+			"password":   credentials.Password,
 		}).
 		Post(openIDTokenPath)
 
