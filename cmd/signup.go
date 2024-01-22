@@ -23,27 +23,57 @@ package cmd
 
 import (
 	"fmt"
-
+	"github.com/mdp/qrterminal/v3"
 	"github.com/spf13/cobra"
+	"os"
+	"os/exec"
+	"runtime"
 )
 
 // signupCmd represents the signup command
 var signupCmd = &cobra.Command{
 	Use:   "signup",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Opens your web browser to the Sentinel Hub signup page.",
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("signup called")
+
+		const url string = "https://documentation.dataspace.copernicus.eu/Registration.html"
+
+		QR, _ := cmd.Flags().GetBool("QR")
+
+		if QR {
+			config := qrterminal.Config{
+				HalfBlocks: true,
+				Level:      qrterminal.L,
+				Writer:     os.Stdout,
+			}
+			qrterminal.GenerateWithConfig(url, config)
+			return
+		} else {
+			fmt.Println("Opening instructions in your default web-browser...")
+			var err error
+			switch runtime.GOOS {
+			case "linux":
+				err = exec.Command("xdg-open", url).Start()
+			case "windows":
+				err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+			case "darwin":
+				err = exec.Command("open", url).Start()
+			default:
+				err = fmt.Errorf("unsupported platform")
+			}
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+
 	},
 }
 
 func init() {
 	authCmd.AddCommand(signupCmd)
+
+	signupCmd.Flags().BoolP("QR", "q", false, "Display a QR code of the signup page")
 
 	// Here you will define your flags and configuration settings.
 

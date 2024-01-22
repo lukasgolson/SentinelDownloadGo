@@ -50,7 +50,10 @@ to quickly create a Cobra application.`,
 			return
 		}
 
-		RefreshToken, err := Application.GetRefreshToken(Application.Credentials{Username: username, Password: password})
+		login, err := Application.Login(username, password)
+		if err != nil {
+			return
+		}
 
 		if err != nil {
 			fmt.Println(err)
@@ -63,8 +66,10 @@ to quickly create a Cobra application.`,
 			}
 		}
 
-		fmt.Printf("%+v\n", RefreshToken)
-
+		err = login.SaveCredentials()
+		if err != nil {
+			return
+		}
 	},
 }
 
